@@ -15,17 +15,15 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img src="@/assets/common/bigUserHeader.png" class="user-avatar">
+          <span class="name">管理员</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item> 首页 </el-dropdown-item>
           </router-link>
-          <a
-            target="_blank"
-            href="https://github.com/PanJiaChen/vue-admin-template/"
-          >
+          <a target="_blank" href="https://github.com/Hiaao/HR-saas.git">
             <el-dropdown-item>远程仓库</el-dropdown-item>
           </a>
           <el-dropdown-item divided @click.native="logout">
@@ -112,6 +110,15 @@ export default {
     height: 100%;
     line-height: 50px;
 
+    .name {
+      color: #fff;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+    .user-dropdown {
+      color: #fff;
+    }
+
     &:focus {
       outline: none;
     }
@@ -143,9 +150,10 @@ export default {
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 15px;
+          vertical-align: middle;
         }
 
         .el-icon-caret-bottom {
@@ -154,6 +162,7 @@ export default {
           right: -20px;
           top: 25px;
           font-size: 12px;
+          color: #fff;
         }
       }
     }

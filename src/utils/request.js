@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store'
 import { Message } from 'element-ui'
 
 const request = axios.create({
@@ -12,7 +13,16 @@ const request = axios.create({
   timeout: 5000 // 设置超时时间
 })
 
-request.interceptors.request.use()
+// 请求拦截器：配置统一token
+request.interceptors.request.use(config => {
+  // 通过getters快速访问token
+  if (store.getters.token) {
+    config.headers['Authorization'] = `Bearer ${store.getters.token}`
+  }
+  return config
+}, error => {
+  return Promise.reject(error)
+})
 
 // 响应拦截器：通过配置统一给所有请求添加 成功的返回值和错误信息提示和错误跳转到catch
 request.interceptors.response.use(response => {
