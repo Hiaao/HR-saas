@@ -75,7 +75,7 @@ export default {
   name: 'Login',
   data() {
     const validateMobile = (rule, value, callback) => {
-      console.log(validMobile(value))
+      // console.log(validMobile(value))
       validMobile(value) ? callback() : callback(new Error('手机号不正确'))
     }
     return {

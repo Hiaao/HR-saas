@@ -1,6 +1,10 @@
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
 import { Message } from 'element-ui'
+import { getTimeStamp } from './auth'
+
+const TimeOut = 3600 // 定义token超时时间一小时
 
 const request = axios.create({
   // 如何在开发环境和生产环境中配置不同的url
@@ -17,6 +21,13 @@ const request = axios.create({
 request.interceptors.request.use(config => {
   // 通过getters快速访问token
   if (store.getters.token) {
+    // 有token时，检查时间戳是否超时
+    if (checkTimeOut()) {
+      // true，表示token过期
+      store.dispatch('user/logout') // token过期，登出操作 就清空token和用户信息
+      router.push('/login') // 跳转到登录页面
+      return Promise.reject(new Error('登录已过期，请重新登录'))
+    }
     config.headers['Authorization'] = `Bearer ${store.getters.token}`
   }
   return config
@@ -40,5 +51,12 @@ request.interceptors.response.use(response => {
   // 返回执行错误，让当前的执行链跳出成功，直接进入catch
   return Promise.reject(error)
 })
+
+// 判断是否超时
+function checkTimeOut() {
+  var currentTiem = Date.now() // 当前时间戳
+  var timeStamp = getTimeStamp() // 最开时获取token的时间戳
+  return (currentTiem - timeStamp) / 1000 > TimeOut
+}
 
 export default request

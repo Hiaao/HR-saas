@@ -13,6 +13,7 @@ export const getUserInfo = () => request({
   method: 'POST'
 })
 
-export function logout() {
-
-}
+// 根据id获取角色详情
+export const getDetailById = id => request({
+  url: `/sys/user/${id}`
+})

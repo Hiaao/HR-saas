@@ -7,7 +7,7 @@ import 'nprogress/nprogress.css' // 引入样式
 // 前置守卫
 // next为守卫的钩子，必须执行
 const whiteList = ['/login', '/404']
-router.beforeEach((to, form, next) => {
+router.beforeEach(async(to, form, next) => {
   nprogress.start() // 开启进度条
   // 有token
   if (store.getters.token) {
@@ -16,6 +16,12 @@ router.beforeEach((to, form, next) => {
       // 如果访问登录页
       next('/') // 跳到主页
     } else {
+      // 有token并且通行就通过action方法获取用户信息
+      // 通过userId判断是否已有信息，有则不重复获取
+      if (!store.getters.userId) {
+        // 方法中执行了axios请求所以为异步，解决异步
+        await store.dispatch('user/getUserInfo')
+      }
       next() // 通行
     }
   } else {

@@ -12,8 +12,17 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+// 通过 * as 将定义的组件存放在一个对象中
+import * as directives from './directives'
 import '@/icons' // icon
 import '@/permission' // permission control
+
+// 通过循环一次性定义全局指令
+// Object.keys()返回一个key值的数组，通过数组的循环定义指令
+Object.keys(directives).forEach(key => {
+  // 定义指令key，传入指令对象directives[key]
+  Vue.directive(key, directives[key])
+})
 
 /**
  * If you don't want to use mock-server

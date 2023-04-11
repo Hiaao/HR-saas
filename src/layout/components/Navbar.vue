@@ -15,8 +15,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="@/assets/common/bigUserHeader.png" class="user-avatar">
-          <span class="name">管理员</span>
+          <img v-imageerror="defaultImg" :src="staffPhoto" class="user-avatar">
+          <span class="name">{{ name }}</span>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -45,8 +45,13 @@ export default {
     // Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      defaultImg: require('@/assets/common/head.jpg') // require防止打包后找不到图片
+    }
+  },
   computed: {
-    ...mapGetters(['sidebar', 'avatar'])
+    ...mapGetters(['sidebar', 'staffPhoto', 'name'])
   },
   methods: {
     toggleSideBar() {
@@ -54,7 +59,7 @@ export default {
     },
     async logout() {
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push(`/login`)
     }
   }
 }
