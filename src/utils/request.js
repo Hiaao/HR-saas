@@ -26,7 +26,7 @@ request.interceptors.request.use(config => {
       // true，表示token过期
       store.dispatch('user/logout') // token过期，登出操作 就清空token和用户信息
       router.push('/login') // 跳转到登录页面
-      return Promise.reject(new Error('登录已过期，请重新登录'))
+      return Promise.reject(new Error('登录已过期，请重新登录')) // 页面提示错误
     }
     config.headers['Authorization'] = `Bearer ${store.getters.token}`
   }
@@ -47,7 +47,14 @@ request.interceptors.response.use(response => {
     return Promise.reject(new Error(message))
   }
 }, error => {
-  Message.error(error.message) // 错误提示信息
+  // 通过服务器返回错误代码10002得知 token失效，从而被动处理
+  if (error.response && error.response.data && error.response.data.code === 10002) {
+    store.dispatch('user/logout')
+    router.push('/login')
+    return Promise.reject(new Error('登录已过期，请重新登录'))
+  } else {
+    Message.error(error.message) // 错误提示信息
+  }
   // 返回执行错误，让当前的执行链跳出成功，直接进入catch
   return Promise.reject(error)
 })
