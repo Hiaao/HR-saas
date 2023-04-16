@@ -8,7 +8,8 @@ export default {
       name: 'social',
       component: () => import('@/views/social'),
       meta: {
-        title: '社保'
+        title: '社保',
+        icon: 'table'
       }
     }
   ]

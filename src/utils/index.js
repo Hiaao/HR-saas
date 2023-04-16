@@ -45,7 +45,7 @@ export function parseTime(time, cFormat) {
   const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key]
     // Note: getDay() returns 0 on Sunday
-    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
+    if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value] }
     return value.toString().padStart(2, '0')
   })
   return time_str
@@ -114,4 +114,20 @@ export function param2Obj(url) {
     }
   })
   return obj
+}
+
+// 列表型数据转换为树形数据，树形需要一个根
+export function tranListToTreeData(list, rootValue) {
+  var arr = []
+  list.forEach(obj => {
+    // 当pid为空，表示为根，则需要找其下有没有子节点
+    if (obj.pid === rootValue) {
+      const children = tranListToTreeData(list, obj.id)
+      if (children.length) {
+        obj.children = children
+      }
+      arr.push(obj)
+    }
+  })
+  return arr
 }
