@@ -18,3 +18,9 @@ export const delDepartment = id => request({
   url: `/company/department/${id}`,
   method: 'DELETE'
 })
+
+// 根据id获取部门详情
+export const getDepartmentById = id => request({
+  url: `/company/department/${id}`,
+  method: 'GET'
+})

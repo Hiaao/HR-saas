@@ -61,7 +61,7 @@ export default {
       } else if (type === 'edit') {
         // 编辑功能
         // 通知父组件 弹层 并且也要记录编辑哪个部门
-        // this.$emit('editDepts', this.treeNode) // 触发编辑部门事件
+        this.$emit('editDepts', this.treeNode) // 触发编辑部门事件
       } else {
         // 删除功能 调用删除接口？？？？？
         // 正常的删除 都得提示

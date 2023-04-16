@@ -1,9 +1,5 @@
 <template>
-  <el-dialog
-    title="新增部门"
-    :visible="isShowDialog"
-    @close="btnCancel"
-  >
+  <el-dialog :title="showTitle" :visible="isShowDialog" @close="btnCancel">
     <el-form
       ref="formData"
       :model="formData"
@@ -61,6 +57,7 @@
 </template>
 
 <script>
+import { getDepartmentByIdAPI } from '@/api'
 import {
   getDepartmentsAPI,
   getEmployeeSimpleAPI,
@@ -139,6 +136,12 @@ export default {
       peoples: [] // 接收员工名称
     }
   },
+  computed: {
+    showTitle() {
+      // 根据id判断是否为编辑状态
+      return this.formData.id ? '编辑部门' : '新增子部门'
+    }
+  },
   methods: {
     // 获取员工简单信息
     async getEmployeeSimple() {
@@ -159,10 +162,22 @@ export default {
     },
     // 取消按钮
     btnCancel() {
+      // 当编辑时会获取到部门的id，但是关闭并不能重置，所以需要手动将fromdata数据变为空
+      this.formData = {
+        name: '',
+        code: '',
+        mannager: '',
+        introduce: ''
+      }
       // 隐藏弹层
       this.$emit('hideDialog')
       // 清除校验
       this.$refs.formData.resetFields()
+    },
+    // 根据id获取部门详情方法
+    async getDepartmentById(id) {
+      // 通过形参传值防止异步，this.treeNode.id 得不到结果
+      this.formData = await getDepartmentByIdAPI(id)
     }
   }
 }

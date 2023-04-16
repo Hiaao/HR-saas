@@ -3,7 +3,11 @@
     <div class="app-container">
       <!-- 卡片card用于包裹 组织架构内容头部 -->
       <el-card class="tree-card">
-        <TreeTools :tree-node="company" :is-root="true" @addDepts="addDepartments" />
+        <TreeTools
+          :tree-node="company"
+          :is-root="true"
+          @addDepts="addDepartments"
+        />
 
         <!-- 树形结构 el-tree -->
         <!-- data：获取的数组数据源 props：定义label和children从哪个变量查找 -->
@@ -15,12 +19,19 @@
             :tree-node="data"
             @delDepts="getDepartments"
             @addDepts="addDepartments"
+            @editDepts="editDepartments"
           />
         </el-tree>
       </el-card>
     </div>
 
-    <AddDept :is-show-dialog="isShowDialog" :tree-node="node" @addDepts="getDepartments" @hideDialog="isShowDialog = false" />
+    <AddDept
+      ref="addDept"
+      :is-show-dialog="isShowDialog"
+      :tree-node="node"
+      @addDepts="getDepartments"
+      @hideDialog="isShowDialog = false"
+    />
   </div>
 </template>
 
@@ -68,8 +79,15 @@ export default {
       this.isShowDialog = true
       // 存储所点击的部门
       this.node = node
+    },
+    editDepartments(node) {
+      this.isShowDialog = true
+      this.node = node
+      // 通过调用组件实例，获取组件内的 部门详情的方法
+      this.$refs.addDept.getDepartmentById(node.id)
     }
   }
+
 }
 </script>
 
