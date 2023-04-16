@@ -20,10 +20,10 @@
           placeholder="1-50个字符"
         />
       </el-form-item>
-      <el-form-item prop="mannager" label="部门负责人">
+      <el-form-item prop="manager" label="部门负责人">
         <!-- native修饰符，可以找到原生的select组件 -->
         <el-select
-          v-model="formData.mannager"
+          v-model="formData.manager"
           style="width: 80%"
           placeholder="请选择"
           @focus="getEmployeeSimple"
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { getDepartmentByIdAPI } from '@/api'
+import { getDepartmentByIdAPI, updateDepartmentdAPI } from '@/api'
 import {
   getDepartmentsAPI,
   getEmployeeSimpleAPI,
@@ -79,23 +79,44 @@ export default {
     const checkNameRepeat = async(rule, value, callback) => {
       // 同步获取当前所有部门数据
       const { depts } = await getDepartmentsAPI()
-      // filter找到所有子部门，some判断是否有同名部门
-      const isRepeat = depts
-        .filter((obj) => obj.pid === this.treeNode.id)
-        .some((obj) => obj.name === value)
-      // isRepeat为true 表示找到同名部门
-      isRepeat ? callback(new Error(`同级部门下已存在${value}`)) : callback()
+      if (this.formData.id) {
+        // 编辑模式
+        // 不能和其他的同级部门名字进行重复
+        if (depts.filter(obj => obj.pid === this.formData.pid && obj.id !== this.formData.id).some(obj => obj.name === value)) {
+          // 找到了
+          callback(new Error(`同级部门下已存在${value}`))
+        } else {
+          // 没找到
+          callback()
+        }
+      } else {
+        // 新增模式
+        // filter找到所有子部门，some判断是否有同名部门
+        const isRepeat = depts
+          .filter((obj) => obj.pid === this.treeNode.id)
+          .some((obj) => obj.name === value)
+        // isRepeat为true 表示找到同名部门
+        isRepeat ? callback(new Error(`同级部门下已存在${value}`)) : callback()
+      }
     }
     const checkCodeRepeat = async(rule, value, callback) => {
       const { depts } = await getDepartmentsAPI()
-      const isRepeat = depts.some((obj) => obj.code === value)
-      isRepeat ? callback(new Error(`已存在编码${value}`)) : callback()
+      if (this.formData.id) {
+        if (depts.filter(obj => obj.id !== this.formData.id).some((obj) => obj.code === value)) {
+          callback(new Error(`已存在编码${value}`))
+        } else {
+          callback()
+        }
+      } else {
+        const isRepeat = depts.some((obj) => obj.code === value)
+        isRepeat ? callback(new Error(`已存在编码${value}`)) : callback()
+      }
     }
     return {
       formData: {
         name: '',
         code: '',
-        mannager: '',
+        manager: '',
         introduce: ''
       },
       // 校验规则
@@ -120,7 +141,7 @@ export default {
           },
           { validator: checkCodeRepeat, trigger: 'blur' }
         ],
-        mannager: [
+        manager: [
           { required: true, message: '部门负责人不能为空', trigger: 'blur' }
         ],
         introduce: [
@@ -151,8 +172,15 @@ export default {
     btnOK() {
       this.$refs.formData.validate(async(isOK) => {
         if (isOK) {
-          // 校验成功，添加子部门，子部门的pid为所点击的部门的id
-          await addDepartmentAPI({ ...this.formData, pid: this.treeNode.id })
+          // 判断属于编辑状态还是新增状态
+          if (this.formData.id) {
+            // 编辑
+            await updateDepartmentdAPI(this.formData)
+          } else {
+            // 新增
+            // 校验成功，添加子部门，子部门的pid为所点击的部门的id
+            await addDepartmentAPI({ ...this.formData, pid: this.treeNode.id })
+          }
           // 从新渲染页面数据
           this.$emit('addDepts')
           this.$message.success('添加子部门成功')

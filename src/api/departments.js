@@ -24,3 +24,10 @@ export const getDepartmentById = id => request({
   url: `/company/department/${id}`,
   method: 'GET'
 })
+
+// 保存编辑的数据
+export const updateDepartment = data => request({
+  url: `/company/department/${data.id}`,
+  method: 'PUT',
+  data
+})
