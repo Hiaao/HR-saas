@@ -1,6 +1,7 @@
 import { login, getUserInfo, getDetailById } from './user'
 import { getDepartments, delDepartment, addDepartment, getDepartmentById, updateDepartment } from './departments'
 import { getEmployeeSimple } from './employees'
+import { getRoleList } from './setting'
 
 // 用户相关API
 export const loginAPI = login
@@ -16,4 +17,7 @@ export const updateDepartmentdAPI = updateDepartment
 
 // 员工相关API
 export const getEmployeeSimpleAPI = getEmployeeSimple
+
+// 角色管理相关API
+export const getRoleListAPI = getRoleList
 
