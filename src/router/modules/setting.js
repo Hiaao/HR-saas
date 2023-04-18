@@ -8,7 +8,7 @@ export default {
       name: 'setting',
       component: () => import('@/views/setting'),
       meta: {
-        title: '权限管理',
+        title: '公司设置',
         icon: 'setting'
       }
     }
