@@ -20,7 +20,15 @@ router.beforeEach(async(to, form, next) => {
       // 通过userId判断是否已有信息，有则不重复获取
       if (!store.getters.userId) {
         // 方法中执行了axios请求所以为异步，解决异步
-        await store.dispatch('user/getUserInfo')
+        const { roles: { menus }} = await store.dispatch('user/getUserInfo')
+
+        // console.log(menus)
+        // 获取当前登录用户所拥有的动态权限
+        const routes = await store.dispatch('permission/filterRoutes', menus)
+        // 需要将获取到的routes动态权限赋值给路由表，和静态路由合并
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }])
+
+        next(to.path) //  router.addRoutes()方法之后必须使用这行代码，表示再跳转一次，路由才能完全渲染到路由表中
       }
       next() // 通行
     }

@@ -1,5 +1,6 @@
 import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 import { loginAPI, getUserInfoAPI, getDetailByIdAPI } from '@/api'
+import { resetRouter } from '@/router'
 export default ({
   namespaced: true,
   state: {
@@ -50,6 +51,13 @@ export default ({
       // 清空token和用户信息
       context.commit('removeToken')
       context.commit('removeUserInfo')
+
+      // 重置路由表
+      resetRouter()
+
+      // 重置vuex中的routes
+      // 想要调用有命名空间的子模块中的mutation方法，需要使用 路径 并且 开启{ root: true }才能允许调用
+      context.commit('permission/setRoutes', [], { root: true })
     }
   }
 })

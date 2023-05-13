@@ -5,10 +5,16 @@ export const imageerror = {
   inserted(dom, options) {
     // dom：异常图片，指令作用的dom对象
     // options：指令所传入变量的解释，通过option.value得到传入的变量
+    dom.src = dom.src || options.value // 当图片地址为空，则使用传入的图片
+
     // img出错会自动触发 onerror (通过这个对象解决图片异常)
     dom.onerror = function() {
       // 当图片出现异常，就将传入的默认图片设置为当前图片
       dom.src = options.value
     }
+  },
+  // 头像更新时执行，判断是否为空
+  componentUpdated(dom, options) {
+    dom.src = dom.src || options.value
   }
 }

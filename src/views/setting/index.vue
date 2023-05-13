@@ -34,8 +34,16 @@
                 <!-- 作用域插槽 -->
                 <!-- slot-scope结构出row(当前行) 得到id数据 -->
                 <template slot-scope="{ row }">
-                  <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="assignPerm(row.id)"
+                  >分配权限</el-button>
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="editRole(row.id)"
+                  >编辑</el-button>
                   <el-button
                     size="small"
                     type="danger"
@@ -113,7 +121,12 @@
     </div>
     <!-- 弹层组件 -->
     <el-dialog title="编辑角色" :visible="isDialogShow" @close="closeBtn()">
-      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
+      <el-form
+        ref="roleForm"
+        :model="roleForm"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-form-item prop="name" label="角色名称">
           <el-input v-model="roleForm.name" style="width: 500px" />
         </el-form-item>
@@ -129,6 +142,29 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <!-- 分配权限弹层 -->
+    <el-dialog :visible="isShowPermDialog" title="权限分配" @close="btnPermCancel">
+      <el-tree
+        ref="permTree"
+        node-key="id"
+        :default-checked-keys="selectCheck"
+        :show-checkbox="true"
+        :check-strictly="true"
+        :data="permData"
+        :props="defaultProps"
+        :default-expand-all="true"
+      />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small" @click="btnPermCancel">取消</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="btnPermOK"
+          >确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
@@ -139,8 +175,11 @@ import {
   deleteRoleAPI,
   getRoleDetailAPI,
   updateRoleAPI,
-  addRoleAPI
+  addRoleAPI,
+  getPermissionListAPI,
+  assignPermAPI
 } from '@/api'
+import { tranListToTreeData } from '@/utils'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Setting',
@@ -155,16 +194,19 @@ export default {
       },
       formData: {},
       isDialogShow: false,
+      isShowPermDialog: false,
+      userId: null,
+      selectCheck: [], // 记录当前权限点
       // 编辑表单的数据和校验规则
       roleForm: {
         name: '',
         description: ''
       },
       rules: {
-        name: [
-          { required: true, trigger: 'blur', message: '角色名不能为空' }
-        ]
-      }
+        name: [{ required: true, trigger: 'blur', message: '角色名不能为空' }]
+      },
+      permData: [], // 接收权限数据
+      defaultProps: { label: 'name' } // 定义树形显示的名称和子组件的名称
     }
   },
   computed: {
@@ -210,10 +252,10 @@ export default {
         await this.$refs.roleForm.validate()
         // 通过校验后
         if (this.roleForm.id) {
-        // 有id为编辑
+          // 有id为编辑
           await updateRoleAPI(this.roleForm)
         } else {
-        // 无id为新增
+          // 无id为新增
           await addRoleAPI(this.roleForm)
         }
         this.getRoleList()
@@ -231,6 +273,29 @@ export default {
       }
       // 充值校验规则和表单值
       this.$refs.roleForm.resetFields()
+    },
+    async assignPerm(id) {
+      // 获取权限列表
+      this.permData = tranListToTreeData(await getPermissionListAPI(), '0')
+      this.userId = id
+
+      // 获取当前角色拥有的权限点数据
+      const { permIds } = await getRoleDetailAPI(id)
+      this.selectCheck = permIds
+      this.isShowPermDialog = true
+    },
+    btnPermCancel() {
+      this.isShowPermDialog = false
+      this.selectCheck = []
+    },
+    async btnPermOK() {
+      // 需要获取permIds，调用接口，通过tree组件的方法获取到
+      const permIds = this.$refs.permTree.getCheckedKeys()
+      console.log(permIds)
+      await assignPermAPI({ permIds: permIds, id: this.userId })
+
+      this.$message.success('修改权限成功')
+      this.isShowPermDialog = false
     }
   }
 }
