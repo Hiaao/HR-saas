@@ -77,7 +77,7 @@ export const updateJob = data => request({
 
 // 分配角色
 export const assignRole = data => request({
-  url: `/sys/user/assignRoles`,
+  url: `/sys/role/assignRoles`,
   method: 'put',
   data
 })

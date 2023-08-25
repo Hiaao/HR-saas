@@ -4,7 +4,7 @@ import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
+// import locale from 'element-ui/lib/locale/lang/zh-CN' // lang i18n
 
 import '@/styles/index.scss' // global css
 
@@ -25,6 +25,8 @@ import * as filters from '@/filters'
 
 import Print from 'vue-print-nb'
 Vue.use(Print)
+
+import i18n from '@/lang'
 
 // 通过循环一次性定义全局指令
 // Object.keys()返回一个key值的数组，通过数组的循环定义指令
@@ -52,7 +54,11 @@ Vue.mixin(CheckPermission)
  */
 
 // set ElementUI lang to EN
-Vue.use(ElementUI, { locale })
+Vue.use(ElementUI, {
+  // 通过i18n来改变语言
+  // 根据当前的locale属性，去寻找对应的显示内容
+  i18n: (key, value) => i18n.t(key) // t方法 根据传入的key找到对应的内容
+})
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
@@ -65,5 +71,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

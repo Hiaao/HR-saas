@@ -8,9 +8,9 @@
 // 按需加入
 import * as echarts from 'echarts/core'
 import { RadarChart } from 'echarts/charts' // 引入雷达图
-import { TitleComponent, TooltipComponent } from 'echarts/components' // 引入如标题等功能的组件
+import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components' // 引入如标题等功能的组件
 import { CanvasRenderer } from 'echarts/renderers' // Canvas渲染器很重要的一步
-echarts.use([RadarChart, TitleComponent, TooltipComponent, CanvasRenderer]) // 注册使用
+echarts.use([RadarChart, TitleComponent, TooltipComponent, LegendComponent, CanvasRenderer]) // 注册使用
 export default {
   // 当页面渲染完毕通过mounted(页面渲染完毕)执行,获取数据
   mounted() {

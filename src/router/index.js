@@ -58,7 +58,7 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: () => import('@/views/dashboard/index'),
       meta: { title: '首页', icon: 'dashboard' }
     }]
@@ -90,7 +90,9 @@ export const asyncRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  // 地址模式：history和hash
+  mode: 'history', // require service support
+  base: '/hr/', // 基地址，统一给所有地址添加一个前缀
   scrollBehavior: () => ({ y: 0 }),
   routes: [...constantRoutes] // 静态路由和动态路由的临时合并
 })

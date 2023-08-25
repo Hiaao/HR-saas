@@ -81,7 +81,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '123456'
+        password: '888itcast.CN764%...'
       },
       loginRules: {
         mobile: [
@@ -95,7 +95,7 @@ export default {
           { required: true, trigger: 'blur', message: '密码不能为空' },
           {
             min: 6,
-            max: 16,
+            max: 20,
             message: '密码的长度在6-16位之间 ',
             trigger: 'blur'
           }
